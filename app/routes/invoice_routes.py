@@ -55,10 +55,15 @@ def create_invoice():
     if not customer:
         return jsonify({"error": f"Customer with ID {data['customer_id']} not found"}), 400
 
+    # Get current user ID from JWT token
+    current_user_id = get_jwt_identity()
+    
     # Create invoice (MASTER)
     invoice = Invoice(
         customer_id=data['customer_id'],
-        status='pending'
+        status='pending',
+        created_by=current_user_id,
+        updated_by=current_user_id
     )
     db.session.add(invoice)
     db.session.commit()
@@ -99,11 +104,31 @@ def get_invoices():
 
     result = []
     for inv in invoices:
+        # Get user names for created_by and updated_by
+        created_by_user = None
+        updated_by_user = None
+        
+        if inv.created_by:
+            from app.models.user import User
+            created_user = User.query.get(inv.created_by)
+            if created_user:
+                created_by_user = created_user.name
+                
+        if inv.updated_by:
+            from app.models.user import User
+            updated_user = User.query.get(inv.updated_by)
+            if updated_user:
+                updated_by_user = updated_user.name
+
         result.append({
             "id": inv.id,
             "customer_id": inv.customer_id,
             "total_amount": inv.total_amount,
-            "status": inv.status
+            "status": inv.status,
+            "created_by": created_by_user,
+            "updated_by": updated_by_user,
+            "created_at": inv.created_at.isoformat() if inv.created_at else None,
+            "updated_at": inv.updated_at.isoformat() if inv.updated_at else None
         })
 
     return jsonify(result), 200
@@ -121,7 +146,12 @@ def update_invoice(invoice_id):
         return jsonify({"errors": errors}), 400
 
     invoice = Invoice.query.get_or_404(invoice_id)
+    
+    # Get current user ID from JWT token
+    current_user_id = get_jwt_identity()
+    
     invoice.status = data['status']
+    invoice.updated_by = current_user_id
     db.session.commit()
 
     return jsonify({"message": "Invoice updated successfully"}), 200
