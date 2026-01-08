@@ -1,0 +1,151 @@
+{% extends "layout.html" %}
+
+{% block title %}Edit Invoice #{{ invoice.id }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/invoice-form.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+
+<div class="edit-invoice-container">
+    <h2><i class="fas fa-edit"></i> Edit Invoice #{{ invoice.id }}</h2>
+
+    <form method="POST" id="invoiceForm">
+        <!-- ================= MASTER SECTION ================= -->
+        <div class="section">
+            <h3>Invoice Master</h3>
+            <div class="master-grid">
+                <!-- Left Column -->
+                <div class="master-col">
+                    <div class="form-row">
+                        <label class="form-label">ID</label>
+                        <input type="text" class="form-control" value="{{ invoice.id }}" disabled>
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label">Customer</label>
+                        <select name="customer_id" class="form-control" required>
+                            <option value="">-- Select Customer --</option>
+                            {% for c in customers %}
+                            <option value="{{ c.id }}" {% if invoice.customer_id==c.id %}selected{% endif %}>{{ c.name
+                                }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label">Status</label>
+                        <select name="status" class="form-control">
+                            <option value="pending" {% if invoice.status=='pending' %}selected{% endif %}>Pending
+                            </option>
+                            <option value="paid" {% if invoice.status=='paid' %}selected{% endif %}>Paid</option>
+                            <option value="cancelled" {% if invoice.status=='cancelled' %}selected{% endif %}>Cancelled
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="master-col">
+                    <div class="form-row">
+                        <label class="form-label">Date</label>
+                        <input type="date" name="invoice_date" class="form-control"
+                            value="{{ invoice.invoice_date.strftime('%Y-%m-%d') if invoice.invoice_date else '' }}"
+                            required>
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label">Total Amount</label>
+                        <input type="number" name="total_amount" id="totalAmountDisplay" class="form-control" readonly
+                            value="{{ invoice.total_amount }}"
+                            style="background-color: #f8fafc; font-weight: bold; color: var(--primary-color);">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= DETAILS SECTION ================= -->
+        <div class="section">
+            <div class="details-header">
+                <h3>Details</h3>
+            </div>
+
+            <div class="table-responsive">
+                <table class="details-table" id="detailsTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 40%;">Product</th>
+                            <th style="width: 20%;">Quantity</th>
+                            <th style="width: 20%;">Price</th>
+                            <th style="width: 20%;">Total Price</th>
+                            <th style="width: 50px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                        <tr class="product-row">
+                            <td>
+                                <select name="product_id[]" class="form-control" onchange="fetchPrice(this)" required>
+                                    <option value="">-- Select Product --</option>
+                                    {% for p in products %}
+                                    <option value="{{ p.id }}" data-price="{{ p.price }}" {% if item.product_id==p.id
+                                        %}selected{% endif %}>{{ p.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td>
+                                <input type="number" name="quantity[]" class="form-control" value="{{ item.quantity }}"
+                                    min="1" oninput="calculateRow(this)" required>
+                            </td>
+                            <td>
+                                <input type="number" name="price[]" class="form-control" readonly
+                                    value="{{ item.product.price if item.product else 0 }}" step="0.01">
+                            </td>
+                            <td>
+                                <input type="number" name="row_total[]" class="form-control" readonly
+                                    value="{{ item.amount }}" step="0.01">
+                            </td>
+                            <td>
+                                <button type="button" class="remove-btn" onclick="removeRow(this)">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <button type="button" class="add-row-btn" onclick="addRow()">
+                    <i class="fas fa-plus-circle"></i> Add Row
+                </button>
+            </div>
+
+            <!-- ================= TOTALS FOOTER ================= -->
+            <div class="totals-section">
+                <div class="totals-grid">
+                    <div class="totals-row">
+                        <label>Total Amount:</label>
+                        <!-- Hidden input if needed for logic, but display handles it -->
+                        <span id="grandTotalDisplay"
+                            style="font-size: 1.5rem; font-weight: 700; color: var(--primary-color);">${{
+                            invoice.total_amount }}</span>
+                        <input type="hidden" name="total_amount" id="totalAmount" value="{{ invoice.total_amount }}">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= ACTIONS ================= -->
+        <div class="actions">
+            <a href="/invoices" class="btn btn-cancel">
+                <i class="fas fa-times"></i> Cancel
+            </a>
+            <button type="submit" class="btn btn-save">
+                <i class="fas fa-save"></i> Update Invoice
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/invoice-form.js') }}"></script>
+{% endblock %}

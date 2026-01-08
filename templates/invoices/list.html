@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block title %}Invoice List{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/invoice-list.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/invoice-actions.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="invoices-container">
+    <div class="header-actions">
+        <h2><i class="fas fa-file-invoice"></i> Invoice List</h2>
+        <a href="/invoices/create" class="btn-create" id="createInvoiceBtn" style="display: none;">
+            <i class="fas fa-plus"></i> Create
+        </a>
+    </div>
+
+    <table class="invoice-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Date</th>
+                <th>Customer</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Invoice rows will be populated by JavaScript -->
+            <tr>
+                <td colspan="6" class="loading-state">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading invoices...</p>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/invoice-list.js') }}"></script>
+{% endblock %}

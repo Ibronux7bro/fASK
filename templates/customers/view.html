@@ -1,0 +1,114 @@
+{% extends "layout.html" %}
+
+{% block title %}View Customer #{{ customer.id }}{% endblock %}
+
+{% block content %}
+
+<div class="view-customer-container">
+    <div class="form-section">
+        <h2><i class="fas fa-user"></i> Customer Details</h2>
+        
+        <table class="details-table">
+            <tr>
+                <td><strong>ID:</strong></td>
+                <td>{{ customer.id }}</td>
+            </tr>
+            <tr>
+                <td><strong>Name:</strong></td>
+                <td>{{ customer.name }}</td>
+            </tr>
+            <tr>
+                <td><strong>Email:</strong></td>
+                <td>{{ customer.email or 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td><strong>Phone:</strong></td>
+                <td>{{ customer.phone or 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td><strong>Address:</strong></td>
+                <td>{{ customer.address or 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td><strong>Created At:</strong></td>
+                <td>{{ customer.created_at.strftime('%Y-%m-%d %H:%M:%S') if customer.created_at else 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td><strong>Updated At:</strong></td>
+                <td>{{ customer.updated_at.strftime('%Y-%m-%d %H:%M:%S') if customer.updated_at else 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td><strong>Created By:</strong></td>
+                <td>Admin</td>
+            </tr>
+        </table>
+        
+        <div class="actions">
+            <a href="/customers/edit/{{ customer.id }}" class="btn btn-save">
+                <i class="fas fa-edit"></i> Edit Customer
+            </a>
+            <a href="/customers" class="btn btn-cancel">
+                <i class="fas fa-arrow-left"></i> Back to Customers
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+.view-customer-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+}
+.form-section {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.details-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+.details-table td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+.details-table td:first-child {
+    font-weight: bold;
+    width: 120px;
+    background-color: #f8f9fa;
+}
+.actions {
+    text-align: center;
+    margin-top: 30px;
+}
+.btn {
+    padding: 12px 30px;
+    margin: 0 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    text-decoration: none;
+    display: inline-block;
+}
+.btn-save {
+    background-color: #007bff;
+    color: white;
+}
+.btn-save:hover {
+    background-color: #0056b3;
+}
+.btn-cancel {
+    background-color: #6c757d;
+    color: white;
+}
+.btn-cancel:hover {
+    background-color: #545b62;
+}
+</style>
+
+{% endblock %}

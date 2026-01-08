@@ -1,0 +1,129 @@
+{% extends "layout.html" %}
+
+{% block title %}View Product #{{ product.id }}{% endblock %}
+
+{% block content %}
+
+<div class="view-product-container">
+    <div class="form-section">
+        <h2><i class="fas fa-box"></i> Product Details</h2>
+        
+        <table class="details-table">
+            <tr>
+                <td><strong>ID:</strong></td>
+                <td>{{ product.id }}</td>
+            </tr>
+            <tr>
+                <td><strong>Name:</strong></td>
+                <td>{{ product.name }}</td>
+            </tr>
+            <tr>
+                <td><strong>Description:</strong></td>
+                <td>{{ product.description or 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td><strong>Price:</strong></td>
+                <td class="price">${{ product.price }}</td>
+            </tr>
+            <tr>
+                <td><strong>Stock Quantity:</strong></td>
+                <td>{{ product.quantity or 0 }}</td>
+            </tr>
+            <tr>
+                <td><strong>Created At:</strong></td>
+                <td>{{ product.created_at.strftime('%Y-%m-%d %H:%M:%S') if product.created_at else 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td><strong>Updated At:</strong></td>
+                <td>{{ product.updated_at.strftime('%Y-%m-%d %H:%M:%S') if product.updated_at else 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td><strong>Status:</strong></td>
+                <td>
+                    {% if product.created_at and product.updated_at %}
+                        {% if product.created_at == product.updated_at %}
+                            <span style="color: green;">✓ Created</span>
+                        {% else %}
+                            <span style="color: blue;">✓ Updated</span>
+                        {% endif %}
+                    {% else %}
+                        <span style="color: gray;">New record</span>
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+        
+        <div class="actions">
+            <a href="/products/edit/{{ product.id }}" class="btn btn-save">
+                <i class="fas fa-edit"></i> Edit Product
+            </a>
+            <a href="/products" class="btn btn-cancel">
+                <i class="fas fa-arrow-left"></i> Back to Products
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+.view-product-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+}
+.form-section {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.details-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+.details-table td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+.details-table td:first-child {
+    font-weight: bold;
+    width: 120px;
+    background-color: #f8f9fa;
+}
+.price {
+    font-weight: bold;
+    color: #28a745;
+    font-size: 18px;
+}
+.actions {
+    text-align: center;
+    margin-top: 30px;
+}
+.btn {
+    padding: 12px 30px;
+    margin: 0 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    text-decoration: none;
+    display: inline-block;
+}
+.btn-save {
+    background-color: #28a745;
+    color: white;
+}
+.btn-save:hover {
+    background-color: #218838;
+}
+.btn-cancel {
+    background-color: #6c757d;
+    color: white;
+}
+.btn-cancel:hover {
+    background-color: #545b62;
+}
+</style>
+
+{% endblock %}

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Invoice Management System{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/invoices.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <ul>
+            <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="/invoices" {% if request.endpoint=='frontend.invoice_list' %}class="active" {% endif %}><i
+                        class="fas fa-file-invoice"></i> Invoices</a></li>
+            <li><a href="/customers" {% if request.endpoint=='frontend.customers_list' %}class="active" {% endif %}><i
+                        class="fas fa-users"></i> Customers</a></li>
+            <li><a href="/products" {% if request.endpoint=='frontend.products_list' %}class="active" {% endif %}><i
+                        class="fas fa-box"></i> Products</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <!-- JS-based notifications -->
+        <div id="error" class="alert alert-danger"
+            style="display: none; background-color: #f8d7da; color: #721c24; padding: 10px; margin-bottom: 10px; border-radius: 4px;">
+        </div>
+        <div id="success" class="alert alert-success"
+            style="display: none; background-color: #d4edda; color: #155724; padding: 10px; margin-bottom: 10px; border-radius: 4px;">
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-messages">
+            {% for category, message in messages %}
+            <div class="flash-message flash-{{ category }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    {% block extra_js %}{% endblock %}
+    <script src="{{ url_for('static', filename='js/api.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+
+</body>
+
+</html>

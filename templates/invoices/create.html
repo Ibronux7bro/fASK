@@ -1,0 +1,145 @@
+{% extends "layout.html" %}
+
+{% block title %}Create Invoice{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/invoice-form.css') }}">
+<!-- Font Awesome for Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+
+<div class="create-invoice-container">
+    <h2><i class="fas fa-file-invoice-dollar"></i> Create New Invoice</h2>
+
+    <form id="invoiceForm">
+        <!-- ================= MASTER SECTION ================= -->
+        <div class="section">
+            <h3>Invoice Master</h3>
+            <div class="master-grid">
+                <!-- Left Column -->
+                <div class="master-col">
+                    <div class="form-row">
+                        <label class="form-label">ID</label>
+                        <input type="text" class="form-control" disabled placeholder="Auto-generated">
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label">Customer</label>
+                        <select name="customer_id" id="customer_id" class="form-control" required>
+                            <option value="">-- Select Customer --</option>
+                            <!-- Customers populated via JS -->
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label">Status</label>
+                        <select class="form-control" disabled>
+                            <option value="pending" selected>Pending</option>
+                        </select>
+                        <input type="hidden" name="status" value="pending">
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="master-col">
+                    <div class="form-row">
+                        <label class="form-label">Date</label>
+                        <input type="date" name="invoice_date" class="form-control" value="{{ date }}" required>
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label">Total Amount</label>
+                        <input type="number" name="total_amount" id="totalAmountDisplay" class="form-control" readonly
+                            value="0.00"
+                            style="background-color: #f8fafc; font-weight: bold; color: var(--primary-color);">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= DETAILS SECTION ================= -->
+        <div class="section">
+            <div class="details-header">
+                <h3>Details</h3>
+            </div>
+
+            <div class="table-responsive">
+                <table class="details-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 40%;">Product</th>
+                            <th style="width: 20%;">Quantity</th>
+                            <th style="width: 20%;">Price</th>
+                            <th style="width: 20%;">Total Price</th>
+                            <th style="width: 50px;"></th> <!-- Action column -->
+                        </tr>
+                    </thead>
+                    <tbody class="product-rows">
+                        <!-- Rows will be added here -->
+                    </tbody>
+                </table>
+
+                <button type="button" class="add-row-btn" onclick="addProductRow()">
+                    <i class="fas fa-plus-circle"></i> Add Row
+                </button>
+            </div>
+
+        </div>
+</div>
+
+<!-- ================= TOTALS FOOTER ================= -->
+<div class="totals-section">
+    <div class="totals-grid">
+        <div class="totals-row">
+            <label>Total Amount:</label>
+            <span id="grandTotalDisplay"
+                style="font-size: 1.5rem; font-weight: 700; color: var(--primary-color);">$0.00</span>
+            <input type="hidden" name="total_amount" id="totalAmount" value="0">
+        </div>
+    </div>
+</div>
+
+<!-- ================= ACTIONS ================= -->
+<div class="actions">
+    <a href="/invoices" class="btn btn-cancel">
+        <i class="fas fa-times"></i> Cancel
+    </a>
+    <button type="submit" class="btn btn-save" id="saveBtn">
+        <i class="fas fa-save"></i> Save Invoice
+    </button>
+</div>
+</form>
+
+<!-- Templates for JS (Outside Form) -->
+<table style="display: none;">
+    <tbody class="product-row-template">
+        <tr class="product-row">
+            <td>
+                <select name="product_id[]" class="form-control" required>
+                    <option value="">-- Select Product --</option>
+                    <!-- Products populated via JS -->
+                </select>
+                <span class="stock-info"></span>
+            </td>
+            <td>
+                <input type="number" name="quantity[]" class="form-control" value="1" min="1" required>
+            </td>
+            <td>
+                <input type="number" name="price[]" class="form-control" readonly step="0.01" placeholder="0.00">
+            </td>
+            <td>
+                <input type="number" name="row_total[]" class="form-control" readonly step="0.01" placeholder="0.00">
+            </td>
+            <td>
+                <button type="button" class="remove-btn" onclick="removeProductRow(this)" title="Remove Row">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/invoice-create.js') }}"></script>
+{% endblock %}
